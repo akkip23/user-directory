@@ -10,12 +10,14 @@ const UserDetails = () => {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryTime, setCountryTime] = useState(null);
-  const [modifiedTime, setModifiedTime] = useState("00:00:00");
+  const [timer, setTimer] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [timeDifference, setTimeDifference] = useState(0); // Store time difference
 
   useEffect(() => {
     async function WorldTime() {
       const worldCountryData = await WorldTimeApi();
-      console.log(worldCountryData);
       setCountries(worldCountryData);
       setSelectedCountry(worldCountryData[0]);
     }
@@ -26,24 +28,38 @@ const UserDetails = () => {
     async function fetchCountryTime() {
       if (selectedCountry) {
         const currTimeData = await GetCurrentTimeForSelCountry(selectedCountry);
-        setCountryTime(currTimeData?.datetime); // Update countryTime with the fetched datetime
+        const serverTime = new Date(currTimeData?.datetime).getTime(); // Time fetched from API
+        const localTime = new Date().getTime(); // Current local time
+        const difference = serverTime - localTime; // Calculate time difference
+
+        setCountryTime(currTimeData?.datetime);
+        setTimeDifference(difference); // Store time difference
+        setElapsedTime(0); // Reset elapsed time when new country time is set
+        setIsRunning(true); // Start the timer when time is set
       }
     }
     fetchCountryTime();
   }, [selectedCountry]); // Trigger whenever selectedCountry changes
 
-  const handleDropdownChange = (event) => {
+  useEffect(() => {
+    let interval;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  const handleDropdownChange = async (event) => {
     setSelectedCountry(event.target.value);
-    console.log(countryTime);
+  };
 
-    const dateTime = new Date(countryTime);
-
-    const hours = dateTime.getHours();
-    const minutes = dateTime.getMinutes();
-    const seconds = dateTime.getSeconds();
-
-    const timeInSeconds = hours * 3600 + minutes * 60 + seconds;
-    formatTime(timeInSeconds);
+  const toggleTimer = () => {
+    setIsRunning((prevState) => !prevState); // Toggle timer on button click
   };
 
   const formatTime = (totalSeconds) => {
@@ -51,11 +67,9 @@ const UserDetails = () => {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    let lund = `${hours.toString().padStart(2, "0")}:${minutes
+    return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    setModifiedTime(lund);
-    console.log("lund", lund);
   };
 
   return (
@@ -65,22 +79,25 @@ const UserDetails = () => {
       >
         <div className="border">
           <div className="userDetails-container">
-            {/* <div className="reditrect_back">
-              <button>Back</button>
-            </div> */}
             <div className="country_selector">
               <select onChange={handleDropdownChange}>
                 {countries.map((country) => (
-                  <option value={country}>{country}</option>
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="Timer-container">
               <div className="current-country-time">
-                <p>{modifiedTime}</p>
+                <p>
+                  {formatTime(elapsedTime + Math.floor(timeDifference / 1000))}
+                </p>
               </div>
               <div className="Timer-ccontrol">
-                <button>Pause/Start</button>
+                <button onClick={toggleTimer}>
+                  {isRunning ? "Pause" : "Start"}
+                </button>
               </div>
             </div>
           </div>
