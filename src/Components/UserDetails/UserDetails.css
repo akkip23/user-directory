@@ -1,7 +1,6 @@
 .border {
   width: 70%;
   height: 70vh;
-  border: 1px solid white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,6 +12,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 950px) {
+  .userDetails-container {
+    flex-direction: column;
+  }
+
+  .Timer-container {
+    margin-top: 35px;
+    width: 80%;
+  }
+  .Timer-container {
+    margin-top: 35px;
+    width: 80%;
+  }
+
+  .current-country-time {
+    width: 100%;
+  }
+
+  .country_selector {
+    width: 80%;
+  }
+
+  .country_selector select {
+    width: 70%;
+    padding: 5px;
+  }
 }
 
 .current-country-time {
