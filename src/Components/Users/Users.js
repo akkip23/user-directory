@@ -3,6 +3,7 @@ import "./Users.css";
 import { useDispatch } from "react-redux";
 import { UsersData, PostsData } from "../API/UserDataApi";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Navbar";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Users = () => {
 
   return (
     <>
+      <Navbar />
       <div className="users-container">
         {users.map((user) => (
           <div

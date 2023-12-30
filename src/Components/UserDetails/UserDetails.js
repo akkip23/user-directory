@@ -5,6 +5,7 @@ import UserDetailsCard from "../UserDetailsCard/UserDetailsCard";
 import UserPosts from "../UsersPosts/UserPosts";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Navbar";
 
 const UserDetails = () => {
   const navigate = useNavigate();
@@ -76,6 +77,7 @@ const UserDetails = () => {
 
   return (
     <>
+      <Navbar />
       <div className="userDetails-Container">
         <div className="border">
           <div className="navigate-back" onClick={() => navigate("/")}>
