@@ -11,12 +11,18 @@ const Users = () => {
   const [posts, setPosts] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const dispatch = useDispatch();
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     async function data() {
       const userData = await UsersData();
-      // console.log("userData", userData);
-      setUsers(userData);
+      if (!userData.error) {
+        setUsers(userData.data);
+      } else {
+        setError(true);
+        setErrorMessage(userData.message);
+      }
     }
     data();
   }, []);
@@ -25,8 +31,8 @@ const Users = () => {
     async function posts() {
       const posts = await PostsData();
       // console.log("postData", posts);
-      setUserPosts(posts);
-      getUserPostCount(posts);
+      setUserPosts(posts.data);
+      getUserPostCount(posts.data);
     }
     posts();
   }, []);
@@ -58,25 +64,27 @@ const Users = () => {
     <>
       <Navbar />
       <div className="users-container">
-        {users.map((user) => (
-          <div
-            className="card"
-            key={user.id}
-            onClick={() => getUserDetails(user)}
-          >
-            <div className="img"></div>
-            <div className="textBox">
-              <div className="textContent">
-                <p className="h1">{user.name}</p>
-                <div className="posts-count">
-                  <span className="span">{posts[user.id]}</span>
-                  <span>Posts</span>
+        {error
+          ? errorMessage
+          : users.map((user) => (
+              <div
+                className="card"
+                key={user.id}
+                onClick={() => getUserDetails(user)}
+              >
+                <div className="img"></div>
+                <div className="textBox">
+                  <div className="textContent">
+                    <p className="h1">{user.name}</p>
+                    <div className="posts-count">
+                      <span className="span">{posts[user.id]}</span>
+                      <span>Posts</span>
+                    </div>
+                  </div>
+                  <p className="p">{user.email}</p>
                 </div>
               </div>
-              <p className="p">{user.email}</p>
-            </div>
-          </div>
-        ))}
+            ))}
       </div>
     </>
   );

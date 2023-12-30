@@ -3,46 +3,25 @@ import "./UserDetails.css";
 import { WorldTimeApi, GetCurrentTimeForSelCountry } from "../API/WorldTimeApi";
 import UserDetailsCard from "../UserDetailsCard/UserDetailsCard";
 import UserPosts from "../UsersPosts/UserPosts";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 
 const UserDetails = () => {
   const navigate = useNavigate();
-  const selectedUserPost = useSelector((state) => state.posts.posts);
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryTime, setCountryTime] = useState(null);
   const [timer, setTimer] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeDifference, setTimeDifference] = useState(0); // Store time difference
 
   useEffect(() => {
     async function WorldTime() {
       const worldCountryData = await WorldTimeApi();
       setCountries(worldCountryData);
-      setSelectedCountry(worldCountryData[0]);
+      fetchCountryTime(worldCountryData[0]);
     }
     WorldTime();
   }, []);
-
-  useEffect(() => {
-    async function fetchCountryTime() {
-      if (selectedCountry) {
-        const currTimeData = await GetCurrentTimeForSelCountry(selectedCountry);
-        const serverTime = new Date(currTimeData?.datetime).getTime(); // Time fetched from API
-        const localTime = new Date().getTime(); // Current local time
-        const difference = serverTime - localTime; // Calculate time difference
-
-        setCountryTime(currTimeData?.datetime);
-        setTimeDifference(difference); // Store time difference
-        setElapsedTime(0); // Reset elapsed time when new country time is set
-        setIsRunning(true); // Start the timer when time is set
-      }
-    }
-    fetchCountryTime();
-  }, [selectedCountry]); // Trigger whenever selectedCountry changes
 
   useEffect(() => {
     let interval;
@@ -50,6 +29,7 @@ const UserDetails = () => {
       interval = setInterval(() => {
         setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
       }, 1000);
+      console.log("interval", interval);
     } else {
       clearInterval(interval);
     }
@@ -57,22 +37,51 @@ const UserDetails = () => {
     return () => clearInterval(interval);
   }, [isRunning]);
 
+  const fetchCountryTime = async (country) => {
+    const currTimeData = await GetCurrentTimeForSelCountry(country);
+    const serverTime = new Date(currTimeData?.datetime);
+    const abbreviationOffset = currTimeData?.datetime.slice(-6);
+
+    const hoursUTC = serverTime.getUTCHours();
+    const minutesUTC = serverTime.getUTCMinutes();
+    const secondsUTC = serverTime.getUTCSeconds();
+
+    const offsetHours = parseInt(abbreviationOffset.slice(1, 3));
+    const offsetMinutes = parseInt(abbreviationOffset.slice(4));
+
+    const newHours = hoursUTC + offsetHours;
+    const newMinutes = minutesUTC + offsetMinutes;
+
+    const adjustedHours = newHours + Math.floor(newMinutes / 60);
+    const adjustedMinutes = newMinutes % 60;
+    const finalHours = adjustedHours % 24;
+
+    const timeString = `${finalHours
+      .toString()
+      .padStart(2, "0")}:${adjustedMinutes
+      .toString()
+      .padStart(2, "0")}:${secondsUTC.toString().padStart(2, "0")}`;
+
+    setCountryTime(timeString);
+    setIsRunning(true);
+
+    const currentTime = new Date();
+    const difference = Math.floor((currentTime - serverTime) / 1000);
+
+    setElapsedTime(difference);
+
+    if (!isRunning) {
+      setIsRunning(true);
+    }
+  };
+
   const handleDropdownChange = async (event) => {
-    setSelectedCountry(event.target.value);
+    setIsRunning(false);
+    fetchCountryTime(event.target.value);
   };
 
   const toggleTimer = () => {
-    setIsRunning((prevState) => !prevState); // Toggle timer on button click
-  };
-
-  const formatTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    setIsRunning((prevState) => !prevState);
   };
 
   return (
@@ -95,9 +104,7 @@ const UserDetails = () => {
             </div>
             <div className="Timer-container">
               <div className="current-country-time">
-                <p>
-                  {formatTime(elapsedTime + Math.floor(timeDifference / 1000))}
-                </p>
+                <p>{countryTime}</p>
               </div>
               <div className="Timer-ccontrol">
                 <button onClick={toggleTimer}>

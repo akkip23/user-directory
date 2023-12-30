@@ -7,9 +7,16 @@ export const UsersData = async () => {
       "https://jsonplaceholder.typicode.com/users"
     );
 
-    return response.data;
+    return {
+      error: false,
+      data: response.data,
+    };
   } catch (error) {
     console.log("error getting user.");
+    return {
+      error: true,
+      message: "Failed to fetch user. Please try again later.",
+    };
   }
 };
 
@@ -19,8 +26,15 @@ export const PostsData = async () => {
       "https://jsonplaceholder.typicode.com/posts"
     );
 
-    return response.data;
+    return {
+      error: false,
+      data: response.data,
+    };
   } catch (error) {
     console.log("error getting posts.");
+    return {
+      error: true,
+      message: "Failed to fetch posts. Please try again later.",
+    };
   }
 };
