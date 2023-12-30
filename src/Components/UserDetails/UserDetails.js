@@ -4,8 +4,10 @@ import { WorldTimeApi, GetCurrentTimeForSelCountry } from "../API/WorldTimeApi";
 import UserDetailsCard from "../UserDetailsCard/UserDetailsCard";
 import UserPosts from "../UsersPosts/UserPosts";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const UserDetails = () => {
+  const navigate = useNavigate();
   const selectedUserPost = useSelector((state) => state.posts.posts);
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -74,10 +76,11 @@ const UserDetails = () => {
 
   return (
     <>
-      <div
-        style={{ display: "flex", justifyContent: "center", color: "white" }}
-      >
+      <div className="userDetails-Container">
         <div className="border">
+          <div className="navigate-back" onClick={() => navigate("/")}>
+            <i class="fa-solid fa-arrow-left-long"></i> <span>Go back</span>
+          </div>
           <div className="userDetails-container">
             <div className="country_selector">
               <select onChange={handleDropdownChange}>
