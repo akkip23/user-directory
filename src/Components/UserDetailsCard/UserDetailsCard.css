@@ -31,3 +31,19 @@
   padding: 10px;
   color: gold;
 }
+
+@media screen and (max-width: 660px) {
+  .user-contactDetails {
+    width: 100%;
+    text-align: start;
+    padding-bottom: 200px;
+  }
+
+  .userDetails-card {
+    flex-direction: column;
+  }
+
+  .user-postCards {
+    margin-top: 150px;
+  }
+}
