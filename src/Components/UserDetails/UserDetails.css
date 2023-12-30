@@ -1,0 +1,63 @@
+.border {
+  width: 70%;
+  height: 70vh;
+  border: 1px solid white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.userDetails-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.current-country-time {
+  width: 300px;
+  height: 70px;
+  border-radius: 30px;
+  background: #212121;
+  box-shadow: 15px 15px 30px rgb(25, 25, 25), -15px -15px 30px rgb(60, 60, 60);
+}
+
+.current-country-time p {
+  text-align: center;
+  font-size: xx-large;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.country_selector {
+  width: 30%;
+}
+
+.country_selector select {
+  width: 70%;
+  padding: 5px;
+}
+
+.country_selector select > option {
+  padding: 2px;
+}
+
+.Timer-container {
+  width: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.Timer-ccontrol button {
+  padding: 13px 19px;
+  border-radius: 16px;
+  background-color: #1899d6;
+  cursor: pointer;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  overflow: visible;
+}

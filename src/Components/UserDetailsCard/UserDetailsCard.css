@@ -1,0 +1,34 @@
+/* user details section */
+
+.userDetails-card {
+  display: flex;
+  width: 100%;
+  height: 40%;
+  border: 2px solid #007c80;
+  margin-top: 20px;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.user-name {
+  width: 45%;
+}
+
+.user-name h2 {
+  margin-bottom: 5px;
+}
+
+.user-contactDetails {
+  width: 50%;
+  text-align: end;
+}
+
+.user-contactDetails p {
+  margin-bottom: 5px;
+}
+
+.user-contactDetails p span {
+  /* margin-right: 5px; */
+  padding: 10px;
+  color: gold;
+}
