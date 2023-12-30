@@ -36,7 +36,7 @@
   .user-contactDetails {
     width: 100%;
     text-align: start;
-    padding-bottom: 200px;
+    padding-bottom: 50px;
   }
 
   .userDetails-card {
@@ -44,6 +44,10 @@
   }
 
   .user-postCards {
-    margin-top: 150px;
+    margin-top: 100px;
+  }
+
+  .user-name {
+    width: 100%;
   }
 }
